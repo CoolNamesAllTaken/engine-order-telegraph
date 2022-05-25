@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name "lib_fp")(type "KiCad")(uri "C:/git-checkouts/engine-order-telegraph/kicad/lib_fp.pretty")(options "")(descr ""))
+)
