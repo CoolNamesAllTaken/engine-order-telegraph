@@ -1,19 +1,41 @@
 #include <Arduino.h>
 
-const uint16_t kBellEnablePin = 26;
-const uint16_t kLightEnablePin = 27;
+#include "engine_order_telegraph.hh"
+
+EngineOrderTelegraph * telegraph;
+static uint32_t last_bell_ring_ms = millis();
+const uint16_t kBellRingIntervalMs = 2000;
+
 void setup() {
-  // put your setup code here, to run once:
-  pinMode(kBellEnablePin, OUTPUT);
-  pinMode(kLightEnablePin, OUTPUT);
+    EngineOrderTelegraph::EngineOrderTelegraphConfig telegraph_config = EngineOrderTelegraph::EngineOrderTelegraphConfig();
+    // Override default configuration here if required.
+
+    telegraph = new EngineOrderTelegraph(telegraph_config);
+    Serial.begin(9600);
+    telegraph->Init();
+
+    #ifdef SETUP
+    telegraph->left_servo_position = 0;
+    telegraph->right_servo_position = 0;
+    while (true) {};
+    #endif
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // digitalWrite(kBellEnablePin, true);
-  digitalWrite(kLightEnablePin, true);
-  delay(50);
-  // digitalWrite(kBellEnablePin, false);
-  digitalWrite(kLightEnablePin, false);
-  delay(100);
+    
+
+    uint32_t current_timestamp_ms = millis();
+    // if (current_timestamp_ms > last_bell_ring_ms + kBellRingIntervalMs) {
+    //     telegraph->RingBell(2);
+    //     last_bell_ring_ms = current_timestamp_ms;
+
+    //     telegraph->left_servo_position++;
+    //     telegraph->left_servo_position = telegraph->left_servo_position > telegraph->kNumPositions ? 0 : telegraph->left_servo_position;
+
+    //     telegraph->right_servo_position++;
+    //     telegraph->right_servo_position = telegraph->right_servo_position > telegraph->kNumPositions ? 0 : telegraph->right_servo_position;
+    // }
+    telegraph->left_servo_position = telegraph->right_lever_position;
+    telegraph->right_servo_position = telegraph->left_lever_position;
+    telegraph->Update();
 }
