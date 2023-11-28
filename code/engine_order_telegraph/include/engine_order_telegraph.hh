@@ -31,6 +31,7 @@ public:
     const int kLeftLeverStepCounts = -400;
     const int kRightLeverStartCounts = 1150; // position 0
     const int kRightLeverStepCounts = 400;
+    const int kLeverStepHysteresisCounts= 100;
 
     // Servo Constants
     const uint16_t kServoStartDegrees = 0;

@@ -33,14 +33,14 @@ void EngineOrderTelegraph::Init() {
 
 void EngineOrderTelegraph::Update() {
     
-    // Serial.printf("Left Lever: %dcts(%d) Right Lever: %dcts(%d) Dimmer: %d Dings: %d\r\n", 
-    //     analogRead(config_.left_lever_pos_pin),
-    //     left_lever_position,
-    //     analogRead(config_.right_lever_pos_pin),
-    //     right_lever_position,
-    //     analogRead(config_.light_dimmer_pos_pin),
-    //     num_pending_bell_rings
-    // );
+    Serial.printf("Left Lever: %dcts(%d) Right Lever: %dcts(%d) Dimmer: %d Dings: %d\r\n", 
+        analogRead(config_.left_lever_pos_pin),
+        left_lever_position,
+        analogRead(config_.right_lever_pos_pin),
+        right_lever_position,
+        analogRead(config_.light_dimmer_pos_pin),
+        num_pending_bell_rings
+    );
     // Loopback mode for testing.
     ReadLeverPositions();
     UpdateBell();
@@ -64,16 +64,31 @@ void EngineOrderTelegraph::RingBell(uint16_t num_rings=1) {
 */
 void EngineOrderTelegraph::ReadLeverPositions() {
     int old_left_lever_position = left_lever_position;
+    int old_left_lever_position_counts = old_left_lever_position*kLeftLeverStepCounts + kLeftLeverStartCounts - kLeftLeverStepCounts/2;
+
     left_lever_position_counts = analogRead(config_.left_lever_pos_pin);
-    left_lever_position = (left_lever_position_counts - kLeftLeverStartCounts + kLeftLeverStepCounts/2) / kLeftLeverStepCounts;
+    if (
+        left_lever_position_counts > old_left_lever_position_counts + kLeftLeverStepCounts/2 + kLeverStepHysteresisCounts ||
+        left_lever_position_counts < old_left_lever_position_counts - kLeftLeverStepCounts/2 - kLeverStepHysteresisCounts
+    ) {
+        // Only allow lever position update if hysteresis is overcome.
+        left_lever_position = (left_lever_position_counts - kLeftLeverStartCounts + kLeftLeverStepCounts/2) / kLeftLeverStepCounts;
+    }
     if (left_lever_position != old_left_lever_position) {
         volatile int absDeltaRings = ABS(left_lever_position-old_left_lever_position);
         RingBell(absDeltaRings);
     }
 
     int old_right_lever_position = right_lever_position;
+    int old_right_lever_position_counts = old_right_lever_position*kRightLeverStepCounts + kRightLeverStartCounts - kRightLeverStepCounts/2;
     right_lever_position_counts = analogRead(config_.right_lever_pos_pin);
-    right_lever_position = (right_lever_position_counts - kRightLeverStartCounts + kRightLeverStepCounts/2) / kRightLeverStepCounts;
+    if (
+        right_lever_position_counts > old_right_lever_position_counts - kRightLeverStepCounts/2 + kLeverStepHysteresisCounts ||
+        right_lever_position_counts < old_right_lever_position_counts - kRightLeverStepCounts/2 + kLeverStepHysteresisCounts
+    ) {
+        // Only allow lever position update if hysteresis is overcome.
+        right_lever_position = (right_lever_position_counts - kRightLeverStartCounts + kRightLeverStepCounts/2) / kRightLeverStepCounts;
+    }
     if (right_lever_position != old_right_lever_position) {
         volatile int absDeltaRings = ABS(right_lever_position-old_right_lever_position);
         RingBell(absDeltaRings);
