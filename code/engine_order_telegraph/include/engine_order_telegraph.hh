@@ -29,9 +29,9 @@ public:
     // const uint16_t kRightLeverThresholds[kNumPositions] = {1300, 1540, 1900, 2320, 2730, 3160, 3650};
     const int kLeftLeverStartCounts = 2580; // position 0
     const int kLeftLeverStepCounts = -400;
-    const int kRightLeverStartCounts = 1150; // position 0
+    const int kRightLeverStartCounts = 1250; // position 0
     const int kRightLeverStepCounts = 400;
-    const int kLeverStepHysteresisCounts= 100;
+    const int kLeverStepHysteresisCounts= 50;
 
     // Servo Constants
     const uint16_t kServoStartDegrees = 0;

@@ -11,7 +11,7 @@ void setup() {
     // Override default configuration here if required.
 
     telegraph = new EngineOrderTelegraph(telegraph_config);
-    Serial.begin(9600);
+    Serial.begin(115200);
     telegraph->Init();
 
     #ifdef SETUP
