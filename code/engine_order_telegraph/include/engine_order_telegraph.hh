@@ -29,9 +29,12 @@ public:
     // const uint16_t kRightLeverThresholds[kNumPositions] = {1300, 1540, 1900, 2320, 2730, 3160, 3650};
     const int kLeftLeverStartCounts = 2580; // position 0
     const int kLeftLeverStepCounts = -400;
-    const int kRightLeverStartCounts = 1250; // position 0
+    const int kRightLeverStartCounts = 1200; // position 0
     const int kRightLeverStepCounts = 400;
     const int kLeverStepHysteresisCounts= 50;
+    const int kLeverFilterNewPosWeight = 80; // 0-100, weight of new reading in low pass filter on lever position.
+    const int kLeverFilterTotalWeight = 100; // used in calculations; turns weights into percentages
+    const int kLeverFilterOldPosWeight = kLeverFilterTotalWeight-kLeverFilterNewPosWeight;
 
     // Servo Constants
     const uint16_t kServoStartDegrees = 0;

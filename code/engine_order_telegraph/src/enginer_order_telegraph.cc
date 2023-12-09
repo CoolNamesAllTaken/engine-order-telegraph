@@ -65,9 +65,10 @@ void EngineOrderTelegraph::RingBell(uint16_t num_rings=1) {
 void EngineOrderTelegraph::ReadLeverPositions() {
     int old_left_lever_position = left_lever_position;
     int old_left_lever_position_counts = old_left_lever_position*kLeftLeverStepCounts + kLeftLeverStartCounts;
-    // left_lever_position_counts = (left_lever_position_counts + analogRead(config_.left_lever_pos_pin)) / 2;
-    left_lever_position_counts = analogRead(config_.left_lever_pos_pin);
-
+    left_lever_position_counts = 
+        kLeverFilterOldPosWeight*left_lever_position_counts/kLeverFilterTotalWeight 
+        + kLeverFilterNewPosWeight*analogRead(config_.left_lever_pos_pin)/kLeverFilterTotalWeight;
+    // left_lever_position_counts = analogRead(config_.left_lever_pos_pin);
     if (
         left_lever_position_counts < old_left_lever_position_counts + kLeftLeverStepCounts/2 - kLeverStepHysteresisCounts ||
         left_lever_position_counts > old_left_lever_position_counts - kLeftLeverStepCounts/2 + kLeverStepHysteresisCounts
@@ -80,7 +81,10 @@ void EngineOrderTelegraph::ReadLeverPositions() {
 
     int old_right_lever_position = right_lever_position;
     int old_right_lever_position_counts = old_right_lever_position*kRightLeverStepCounts + kRightLeverStartCounts;
-    right_lever_position_counts = analogRead(config_.right_lever_pos_pin);
+    right_lever_position_counts = 
+        kLeverFilterOldPosWeight*right_lever_position_counts/kLeverFilterTotalWeight
+        + kLeverFilterNewPosWeight*analogRead(config_.right_lever_pos_pin)/kLeverFilterTotalWeight;
+    // right_lever_position_counts = analogRead(config_.right_lever_pos_pin);
     if (
         right_lever_position_counts > old_right_lever_position_counts + kRightLeverStepCounts/2 + kLeverStepHysteresisCounts ||
         right_lever_position_counts < old_right_lever_position_counts - kRightLeverStepCounts/2 - kLeverStepHysteresisCounts
